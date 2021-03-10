@@ -4,9 +4,7 @@ use ieee.numeric_std.all;
 
 entity frame_cleaner_v1_0 is
   generic (
-    ROW_END_TLAST_G             : boolean       := false;
-    AXI_CTRL_PORT_G             : boolean       := false;
-
+    AXI_CTRL_PORT_G             : boolean       := True;
 
     -- Parameters of Axi Slave Bus Interface S_AXI_CTRL
     C_S_AXI_CTRL_DATA_WIDTH	: integer	:= 32;
@@ -72,6 +70,13 @@ architecture arch_imp of frame_cleaner_v1_0 is
   signal trig_ctrl_s : std_logic := '0';
   signal trig_s      : std_logic := '0';
 
+  -- Register connections
+  signal fc_state_s    : std_logic_vector(31 downto 0);
+  signal frame_count_s : std_logic_vector(31 downto 0);
+  signal line_count_s  : std_logic_vector(31 downto 0);
+  signal tlast_reg_s   : std_logic;
+
+
   -- component declaration
   component frame_cleaner_v1_0_S_AXI_CTRL is
     generic (
@@ -101,6 +106,16 @@ architecture arch_imp of frame_cleaner_v1_0 is
       S_AXI_RVALID  : out std_logic;
       S_AXI_RREADY  : in  std_logic;
 
+      -- Registers
+      frame_count_in : in std_logic_vector(31 downto 0);
+      line_count_in  : in std_logic_vector(31 downto 0);
+      fc_state_in    : in std_logic_vector(31 downto 0);
+
+      -- control_reg_out : out std_logic_vector(31 downto 0);
+
+      tlast_reg_out : out std_logic;
+
+      -- Trigger interface
       trig_out      : out std_logic
       );
   end component frame_cleaner_v1_0_S_AXI_CTRL;
@@ -110,14 +125,19 @@ architecture arch_imp of frame_cleaner_v1_0 is
     generic (
       COUNTER_WIDTH_G : integer := 32;
       NUM_ROWS_G      : integer := 480;
-      NUM_COLS_G      : integer := 640;
-      ROW_END_TLAST_G : boolean := false
+      NUM_COLS_G      : integer := 640
       );
     port (
       -- Control signals
       clk_in          : in  std_logic;
       rst_in          : in  std_logic;
       trig_in         : in  std_logic;
+      row_end_tlast_in : in std_logic;
+
+      -- Registers
+      frame_count_out : out std_logic_vector(31 downto 0);
+      line_count_out  : out std_logic_vector(31 downto 0);
+      fc_state_out    : out std_logic_vector(31 downto 0);
 
       -- Video signals [inputs]
       data_in         : in  std_logic_vector(31 downto 0);
@@ -169,22 +189,37 @@ begin
         S_AXI_RVALID	=> s_axi_ctrl_rvalid,
         S_AXI_RREADY	=> s_axi_ctrl_rready,
 
-        trig_out          => trig_ctrl_s
+        -- Registers
+        frame_count_in  => frame_count_s,
+        line_count_in   => line_count_s,
+        fc_state_in     => fc_state_s,
+
+        tlast_reg_out   => tlast_reg_s,
+
+        -- Trigger interface
+        trig_out        => trig_ctrl_s
         );
   end generate axi_ctrl_u;
+
 
   fc: frame_cleaner
     generic map (
       COUNTER_WIDTH_G => 32,
       NUM_ROWS_G      => 480,
-      NUM_COLS_G      => 640,
-      ROW_END_TLAST_G => ROW_END_TLAST_G
+      NUM_COLS_G      => 640
       )
     port map (
       -- Control signals
       clk_in          => s_axis_video_aclk,
       rst_in          => s_axis_video_aresetn,
       trig_in         => trig_s,
+      -- row_end_tlast_in => control_s(0),
+      row_end_tlast_in => tlast_reg_s,
+
+      -- Registers
+      frame_count_out => frame_count_s,
+      line_count_out  => line_count_s,
+      fc_state_out    => fc_state_s,
 
       -- Video signals [inputs]
       data_in         => s_axis_video_tdata,
