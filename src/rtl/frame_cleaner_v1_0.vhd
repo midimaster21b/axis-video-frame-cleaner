@@ -65,7 +65,7 @@ entity frame_cleaner_v1_0 is
     );
 end frame_cleaner_v1_0;
 
-architecture arch_imp of frame_cleaner_v1_0 is
+architecture rtl of frame_cleaner_v1_0 is
 
   signal trig_ctrl_s : std_logic := '0';
   signal trig_s      : std_logic := '0';
@@ -236,4 +236,4 @@ begin
       frame_start_out => m_axis_video_tuser(0)
       );
 
-end arch_imp;
+end rtl;

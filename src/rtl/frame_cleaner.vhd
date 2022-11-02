@@ -36,7 +36,7 @@ entity frame_cleaner is
     );
 end frame_cleaner;
 
-architecture arch_imp of frame_cleaner is
+architecture rtl of frame_cleaner is
 
   signal data_r           : std_logic_vector(31 downto 0);
   signal keep_r           : std_logic_vector( 3 downto 0);
@@ -206,7 +206,9 @@ begin
   end process;
 
 
+  -----------------------------------------------------------------------------
   -- Count process
+  -----------------------------------------------------------------------------
   count_proc: process(clk_in)
   begin
     if rising_edge(clk_in) then
@@ -239,9 +241,9 @@ begin
   end process;
 
 
-  ---------------------------------
+  -----------------------------------------------------------------------------
   -- Registers
-  ---------------------------------
+  -----------------------------------------------------------------------------
   reg_proc: process(clk_in)
   begin
     if rising_edge(clk_in) then
@@ -281,7 +283,4 @@ begin
       end if;
     end if;
   end process;
-
-
-
-end arch_imp;
+end rtl;
