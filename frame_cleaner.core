@@ -3,6 +3,11 @@ name: midimaster21b:imaging:frame-cleaner:0.1.0
 description: An video AXI stream frame cleaner made to ensure frames are appropriately formatted
 
 filesets:
+  pkg_ip:
+    files:
+      - scripts/pkg_ip.tcl
+    file_type: tclSource
+
   rtl:
     files:
       - src/rtl/frame_cleaner.vhd
@@ -14,6 +19,10 @@ targets:
   # Special FuseSoC target
   default: &default
     default_tool: vivado
+    tools:
+      vivado:
+        pnr: none
     filesets:
       - rtl
-    toplevel: frame_cleaner_v1_0
+      - pkg_ip
+    toplevel: frame_cleaner
