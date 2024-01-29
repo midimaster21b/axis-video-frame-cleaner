@@ -5,7 +5,7 @@ set projName   "axis-video-frame-cleaner"
 set partID     "xczu3eg-sfvc784-1-e"
 set currentDir [file normalize .]
 set ipGenDir   [file join $currentDir "ip_tmp"]
-set ipDir      [file join $currentDir "ip_repo"]
+set ipDir      [file join $currentDir "ip_repo" $projName]
 set corePath   [file join $ipDir component.xml]
 set vendor     "midimaster21b"
 set library    "imaging"
@@ -57,4 +57,4 @@ update_ip_catalog
 puts "================================================================";
 puts "Finished Creating project \"$projName\" \[$partID\]";
 puts "================================================================";
-quit
+
