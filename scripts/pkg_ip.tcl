@@ -37,6 +37,9 @@ ipx::package_project -root_dir $ipDir -vendor $vendor -library $library -taxonom
 ipx::unload_core $corePath
 ipx::edit_ip_in_project -upgrade true -name tmp_edit_project -directory $ipDir $corePath
 update_compile_order -fileset sources_1
+set curr_core [ipx::current_core];
+set vlnv [get_property vlnv $curr_core];
+puts "$projName core: $vlnv";
 set_property core_revision 1 [ipx::current_core]
 # ipx::add_bus_parameter FREQ_HZ [ipx::get_bus_interfaces s_axi_ctrl -of_objects [ipx::current_core]]
 # ipx::add_bus_parameter FREQ_HZ [ipx::get_bus_interfaces s_axis_video_0 -of_objects [ipx::current_core]]
