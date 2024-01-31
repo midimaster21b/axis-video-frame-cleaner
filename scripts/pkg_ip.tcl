@@ -33,7 +33,7 @@ update_compile_order -fileset sources_1
 puts "================================================================";
 puts "Beginning IPX stuffs";
 puts "================================================================";
-ipx::package_project -root_dir $ipDir -vendor $vendor -library $library -taxonomy $taxonomy -import_files -set_current false
+ipx::package_project -root_dir $ipDir -vendor $vendor -library $library -taxonomy $taxonomy -import_files -set_current true
 ipx::unload_core $corePath
 ipx::edit_ip_in_project -upgrade true -name tmp_edit_project -directory $ipDir $corePath
 update_compile_order -fileset sources_1
@@ -41,12 +41,6 @@ set curr_core [ipx::current_core];
 set vlnv [get_property vlnv $curr_core];
 puts "$projName core: $vlnv";
 set_property core_revision 1 [ipx::current_core]
-# ipx::add_bus_parameter FREQ_HZ [ipx::get_bus_interfaces s_axi_ctrl -of_objects [ipx::current_core]]
-# ipx::add_bus_parameter FREQ_HZ [ipx::get_bus_interfaces s_axis_video_0 -of_objects [ipx::current_core]]
-# ipx::add_bus_parameter FREQ_HZ [ipx::get_bus_interfaces s_axis_video_1 -of_objects [ipx::current_core]]
-# ipx::add_bus_parameter FREQ_HZ [ipx::get_bus_interfaces m_axis_video_0 -of_objects [ipx::current_core]]
-# ipx::add_bus_parameter FREQ_HZ [ipx::get_bus_interfaces m_axis_video_1 -of_objects [ipx::current_core]]
-# ipx::add_bus_parameter FREQ_HZ [ipx::get_bus_interfaces m_axis_video_mux -of_objects [ipx::current_core]]
 ipx::update_source_project_archive -component [ipx::current_core]
 ipx::create_xgui_files [ipx::current_core]
 ipx::update_checksums [ipx::current_core]
@@ -54,10 +48,9 @@ ipx::check_integrity [ipx::current_core]
 ipx::save_core [ipx::current_core]
 ipx::move_temp_component_back -component [ipx::current_core]
 close_project -delete
-set_property  ip_repo_paths  $ipDir [current_project]
-update_ip_catalog
 
 puts "================================================================";
 puts "Finished Creating project \"$projName\" \[$partID\]";
 puts "================================================================";
+close_project -delete
 
